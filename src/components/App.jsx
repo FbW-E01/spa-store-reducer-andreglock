@@ -1,5 +1,5 @@
 import React from "react";
-import { useReducer } from 'react';
+import { useReducer, useEffect, useState } from 'react';
 import './App.css';
 
 const initialState = {
@@ -9,157 +9,146 @@ const initialState = {
     distance: 0,
 }
 
-function reducer(previousState, action) {
+function App() {
 
-/*     if (previousState.speed !== 0) {
-        DistanceMeter(previousState);
-    } */
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const [distance, setDistance] = useState(0);
+    let [meter, setMeter] = useState(0);
 
-    switch(action.type) {
-        case "start":
-            if (previousState.started === true) {
-                return { 
-                    started: false,
-                    speed: previousState.speed,
-                    gear: 0,
-                    distance: previousState.distance,
-                }
-            } else {
-                if (Math.round(Math.random()) === 0) {
+    function reducer(previousState, action) {
+    
+        switch(action.type) {
+            case "start":
+                if (previousState.started === true) {
                     return { 
-                        started: true,
+                        started: false,
                         speed: previousState.speed,
                         gear: 0,
                         distance: previousState.distance,
                     }
+                } else {
+                    if (Math.round(Math.random()) === 0) {
+                        return { 
+                            started: true,
+                            speed: previousState.speed,
+                            gear: 0,
+                            distance: previousState.distance,
+                        }
+                    }
+                    return previousState;
+                }
+            case "shift-up":
+                if (previousState.started === true && previousState.gear < 5) {
+                    return { 
+                        started: true,
+                        speed: previousState.speed,
+                        gear: previousState.gear + 1,
+                        distance: previousState.distance,
+                    }
                 }
                 return previousState;
-            }
-        case "shift-up":
-            if (previousState.started === true && previousState.gear < 5) {
-                return { 
-                    started: true,
-                    speed: previousState.speed,
-                    gear: previousState.gear + 1,
-                    distance: previousState.distance,
+            case "shift-down":
+                if (previousState.started === true && previousState.gear > -2) {
+                    return { 
+                        started: true,
+                        speed: previousState.speed,
+                        gear: previousState.gear - 1,
+                        distance: previousState.distance,
+                    }
+                }   
+                return previousState;
+            case "accelerate":
+                if (previousState.speed < 200 && previousState.speed > -40) {
+                    switch(previousState.gear) {
+                        case 0:
+                            return previousState;
+                        case 1:
+                            return { 
+                                started: previousState.started,
+                                speed: previousState.speed + 5,
+                                gear: previousState.gear,
+                                distance: previousState.distance,
+                            }
+                        case 2:
+                            return { 
+                                started: previousState.started,
+                                speed: previousState.speed + 10,
+                                gear: previousState.gear,
+                                distance: previousState.distance,
+                            }
+                        case 3:
+                            return { 
+                                started: previousState.started,
+                                speed: previousState.speed + 20,
+                                gear: previousState.gear,
+                                distance: previousState.distance,
+                            }
+                        case 4:
+                            return { 
+                                started: previousState.started,
+                                speed: previousState.speed + 40,
+                                gear: previousState.gear,
+                                distance: previousState.distance,
+                            }
+                        case 5:
+                            return { 
+                                started: previousState.started,
+                                speed: previousState.speed + 80,
+                                gear: previousState.gear,
+                                distance: previousState.distance,
+                            }
+                        case -1:
+                            return { 
+                                started: previousState.started,
+                                speed: previousState.speed - 5,
+                                gear: previousState.gear,
+                                distance: previousState.distance,
+                            }
+                        case -2:
+                            return { 
+                                started: previousState.started,
+                                speed: previousState.speed - 10,
+                                gear: previousState.gear,
+                                distance: previousState.distance,
+                            }
+                    }
+                } 
+                return previousState;
+            case "brake":
+                if (previousState.speed >= 20) {
+                    return { 
+                        started: previousState.started,
+                        speed: previousState.speed - 20,
+                        gear: previousState.gear,
+                        distance: previousState.distance,
+                    }
+                } else if (previousState.speed <= -20) {
+                    return { 
+                        started: previousState.started,
+                        speed: previousState.speed + 20,
+                        gear: previousState.gear,
+                        distance: previousState.distance,
+                    }
+                } else {
+                    return { 
+                        started: previousState.started,
+                        speed: 0,
+                        gear: previousState.gear,
+                        distance: previousState.distance,
+                    }
                 }
-            }
-            return previousState;
-        case "shift-down":
-            if (previousState.started === true && previousState.gear > -2) {
-                return { 
-                    started: true,
-                    speed: previousState.speed,
-                    gear: previousState.gear - 1,
-                    distance: previousState.distance,
-                }
-            }   
-            return previousState;
-        case "accelerate":
-            if (previousState.speed < 200 && previousState.speed > -40) {
-                switch(previousState.gear) {
-                    case 0:
-                        return previousState;
-                    case 1:
-                        return { 
-                            started: previousState.started,
-                            speed: previousState.speed + 5,
-                            gear: previousState.gear,
-                            distance: previousState.distance,
-                        }
-                    case 2:
-                        return { 
-                            started: previousState.started,
-                            speed: previousState.speed + 10,
-                            gear: previousState.gear,
-                            distance: previousState.distance,
-                        }
-                    case 3:
-                        return { 
-                            started: previousState.started,
-                            speed: previousState.speed + 20,
-                            gear: previousState.gear,
-                            distance: previousState.distance,
-                        }
-                    case 4:
-                        return { 
-                            started: previousState.started,
-                            speed: previousState.speed + 40,
-                            gear: previousState.gear,
-                            distance: previousState.distance,
-                        }
-                    case 5:
-                        return { 
-                            started: previousState.started,
-                            speed: previousState.speed + 80,
-                            gear: previousState.gear,
-                            distance: previousState.distance,
-                        }
-                    case -1:
-                        return { 
-                            started: previousState.started,
-                            speed: previousState.speed - 5,
-                            gear: previousState.gear,
-                            distance: previousState.distance,
-                        }
-                    case -2:
-                        return { 
-                            started: previousState.started,
-                            speed: previousState.speed - 10,
-                            gear: previousState.gear,
-                            distance: previousState.distance,
-                        }
-                }
-            } 
-            return previousState;
-        case "brake":
-            if (previousState.speed >= 20) {
-                return { 
-                    started: previousState.started,
-                    speed: previousState.speed - 20,
-                    gear: previousState.gear,
-                    distance: previousState.distance,
-                }
-            } else if (previousState.speed <= -20) {
-                return { 
-                    started: previousState.started,
-                    speed: previousState.speed + 20,
-                    gear: previousState.gear,
-                    distance: previousState.distance,
-                }
-            } else {
-                return { 
-                    started: previousState.started,
-                    speed: 0,
-                    gear: previousState.gear,
-                    distance: previousState.distance,
-                }
-            }
+        }
     }
-}
 
-function DistanceMeter(previousState) {
-    console.log('DistanceMeter is running')
+    useEffect(() => {
+        setInterval(() => {
+            setMeter(meter++);
+        }, 2000);
+    }, [])
 
-    if (previousState.speed !== 0 ) {
-        setInterval((previousState) => {
-            console.log('setInterval is running')
-            return { 
-                started: previousState.started,
-                speed: previousState.speed,
-                gear: previousState.gear,
-                distance: previousState.distance + previousState.speed,
-            }
-        }, 1000);
-    } else {
-        clearInterval();
-        return previousState;
-    }
-}
-
-function App() {
-
-    const [state, dispatch] = useReducer(reducer, initialState);
+    useEffect(() => {
+        setDistance(distance + state.speed);
+    }, [meter])
 
     return (
         <div id="dashboard">
@@ -167,7 +156,7 @@ function App() {
             <div id="speedometer">
                 Speed: { state.speed } <br />
                 Gear: { state.gear } <br />
-                Distance: { state.distance }
+                Distance: { distance }
             </div>
 
             <div id="buttons">
