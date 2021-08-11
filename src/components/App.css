@@ -1,0 +1,48 @@
+body {
+    font-weight: bold;
+    box-sizing: border-box;
+}
+
+.started-false {
+    color: red;
+}
+
+.started-true {
+    color: green;
+}
+
+#buttons {
+    display: flex;
+}
+
+#buttons > * {
+    width: 90px;
+    height: 90px;
+    margin: 10px;
+}
+
+button#start {
+    border-radius: 50%;
+    border: solid 4px grey;
+    background-color: black;
+    color: white;
+}
+
+.box {
+    display: flex;
+    flex-direction: column;
+}
+
+.shift-up {
+    height: 45px;
+    border-radius: 50% 50% 0 0;
+    background-color: black;
+    color: white;
+}
+
+.shift-down {
+    height: 45px;
+    border-radius: 0 0 50% 50%;
+    background-color: black;
+    color: white;
+}
