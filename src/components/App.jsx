@@ -147,7 +147,7 @@ function App() {
     }, [])
 
     useEffect(() => {
-        setDistance(distance + state.speed);
+        setDistance(distance + Math.sqrt(state.speed * state.speed));
     }, [meter])
 
     return (
